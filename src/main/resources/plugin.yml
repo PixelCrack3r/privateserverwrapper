@@ -1,0 +1,42 @@
+name: PSWrapper
+version: 1.0
+main: me.pixelgames.pixelcrack3r.pswrapper.main.PrivateServer
+author: PixelCrack3r
+commands:
+  phelp:
+    usage: /<command>
+    description: A pixelgames provided command.
+  public:
+    usage: /<command>
+    description: Set the server accessibility to public. 
+  private:
+    usage: /<command>
+    description: Set the server accessibility to private. 
+  pwhitelist:
+    usage: /<command> [player]
+    description: Add or remove a player to/ out of your whitelist.
+  ppl:
+    usage: /<command>
+    description: Shows the installed plugins.
+  pmod:
+    usage: /<command>
+    description: A pixelgames provided command.
+  pgamemode:
+    usage: /<command>
+    description: A pixelgames provided command.
+  pkick:
+    usage: /<command> <player>
+    description: A pixelgames provided command.
+  pban:
+    usage: /<command> <player>
+    description: A pixelgames provided command.
+  punban:
+    usage: /<command> <player>
+    description: A pixelgames provided command.
+  ptime:
+    usage: /<command>
+    description: A pixelgames provided command.
+  pweather:
+    usage: /<command>
+    description: A pixelgames provided command.
+  
