@@ -22,11 +22,11 @@ public class CommandPL implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		MultiLanguageMessanger messanger = new MultiLanguageMessanger("PSWrapper", "de");
+		MultiLanguageMessanger messenger = new MultiLanguageMessanger("PSWrapper", "de");
 		
 		if(sender instanceof Player) {
 			MultiLanguageManager man = new MultiLanguageManager(((Player)sender).getUniqueId(), new MySQLConfiguration(PixelGames.getDefaultMySQL(), "languages"));
-			messanger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
+			messenger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
 		}
 		
 		JsonObject obj = PrivateServer.getInstance().getProperty("plugins", new JsonObject()).getAsJsonObject();
@@ -35,14 +35,14 @@ public class CommandPL implements CommandExecutor {
 				.collect(Collectors.toList());
 		
 		if(installedPlugins.isEmpty()) {
-			sender.sendMessage(messanger.getMessage("plugins-empty"));
+			sender.sendMessage(messenger.getMessage("plugins-empty"));
 			return true;
 		}
 		
-		sender.sendMessage(messanger.getMessage("plugins-installed"));
+		sender.sendMessage(messenger.getMessage("plugins-installed"));
 		
 		for(Entry<String, JsonElement> plugin : installedPlugins) {
-			sender.sendMessage(messanger.getMessage("plugins-entry").replaceAll("%name%", plugin.getValue().getAsJsonObject().get("name").getAsString()));
+			sender.sendMessage(messenger.getMessage("plugins-entry").replaceAll("%name%", plugin.getValue().getAsJsonObject().get("name").getAsString()));
 		}
 		
 		return true;

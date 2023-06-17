@@ -14,14 +14,14 @@ public class CommandMod implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		MultiLanguageMessanger messanger = new MultiLanguageMessanger("PSWrapper", "de");
+		MultiLanguageMessanger messenger = new MultiLanguageMessanger("PSWrapper", "de");
 		
 		if(sender instanceof Player) {
 			MultiLanguageManager man = new MultiLanguageManager(((Player)sender).getUniqueId(), new MySQLConfiguration(PixelGames.getDefaultMySQL(), "languages"));
-			messanger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
+			messenger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
 		}
-		
-		messanger.getMessage("");
+
+		messenger.getMessage("");
 		sender.sendMessage("§cThis command is still a work in progress.");
 		
 		return true;

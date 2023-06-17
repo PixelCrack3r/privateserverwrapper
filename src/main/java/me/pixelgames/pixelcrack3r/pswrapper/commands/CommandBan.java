@@ -19,15 +19,15 @@ public class CommandBan implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		MultiLanguageMessanger messanger = new MultiLanguageMessanger("PSWrapper", "de");
+		MultiLanguageMessanger messenger = new MultiLanguageMessanger("PSWrapper", "de");
 		
 		if(sender instanceof Player) {
 			MultiLanguageManager man = new MultiLanguageManager(((Player)sender).getUniqueId(), new MySQLConfiguration(PixelGames.getDefaultMySQL(), "languages"));
-			messanger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
+			messenger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
 		}
 		
 		if(args.length <= 0) {
-			sender.sendMessage(messanger.getMessage("ban-usage"));
+			sender.sendMessage(messenger.getMessage("ban-usage"));
 			return true;
 		}
 		
@@ -35,7 +35,7 @@ public class CommandBan implements CommandExecutor {
 		Player targetPlayer = Bukkit.getPlayer(target);
 		
 		if(targetPlayer == (Player) sender) {
-			sender.sendMessage(messanger.getMessage("ban-no-target").replaceAll("%target%", args[0]));
+			sender.sendMessage(messenger.getMessage("ban-no-target").replaceAll("%target%", args[0]));
 			return true;
 		}
 		
@@ -49,7 +49,7 @@ public class CommandBan implements CommandExecutor {
 		array.add(playerData);
 		
 		PrivateServer.getInstance().setProperty("bannedPlayers", array);
-		sender.sendMessage(messanger.getMessage("ban-success").replaceAll("%target%", name));
+		sender.sendMessage(messenger.getMessage("ban-success").replaceAll("%target%", name));
 		if(targetPlayer != null) targetPlayer.kickPlayer("You were kicked from the server of " + Bukkit.getOfflinePlayer(PrivateServer.getInstance().getOwner()).getName());
 		
 		return true;

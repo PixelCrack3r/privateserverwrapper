@@ -18,15 +18,15 @@ public class CommandUnban implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		MultiLanguageMessanger messanger = new MultiLanguageMessanger("PSWrapper", "de");
+		MultiLanguageMessanger messenger = new MultiLanguageMessanger("PSWrapper", "de");
 		
 		if(sender instanceof Player) {
 			MultiLanguageManager man = new MultiLanguageManager(((Player)sender).getUniqueId(), new MySQLConfiguration(PixelGames.getDefaultMySQL(), "languages"));
-			messanger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
+			messenger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
 		}
 		
 		if(args.length <= 0) {
-			sender.sendMessage(messanger.getMessage("unban-usage"));
+			sender.sendMessage(messenger.getMessage("unban-usage"));
 			return true;
 		}
 		
@@ -45,8 +45,8 @@ public class CommandUnban implements CommandExecutor {
 		});
 		
 		if(array.size() - 1 == bannedPlayers.size()) {
-			sender.sendMessage(messanger.getMessage("unban-success").replaceAll("%target%", name));	
-		} else sender.sendMessage(messanger.getMessage("unban-no-target").replaceAll("%target%", args[0]));
+			sender.sendMessage(messenger.getMessage("unban-success").replaceAll("%target%", name));
+		} else sender.sendMessage(messenger.getMessage("unban-no-target").replaceAll("%target%", args[0]));
 		
 		PrivateServer.getInstance().setProperty("bannedPlayers", bannedPlayers);
 		

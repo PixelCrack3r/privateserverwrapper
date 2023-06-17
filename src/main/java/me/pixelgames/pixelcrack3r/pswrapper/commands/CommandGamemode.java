@@ -16,11 +16,11 @@ public class CommandGamemode implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		MultiLanguageMessanger messanger = new MultiLanguageMessanger("PSWrapper", "de");
+		MultiLanguageMessanger messenger = new MultiLanguageMessanger("PSWrapper", "de");
 		
 		if(sender instanceof Player) {
 			MultiLanguageManager man = new MultiLanguageManager(((Player)sender).getUniqueId(), new MySQLConfiguration(PixelGames.getDefaultMySQL(), "languages"));
-			messanger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
+			messenger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
 		}
 		
 		GameMode gameMode = null;
@@ -39,12 +39,12 @@ public class CommandGamemode implements CommandExecutor {
 			try {
 				gmId = Integer.parseInt(args[0]);
 			} catch(Exception e) {
-				sender.sendMessage(messanger.getMessage("gamemode-not-exists").replaceAll("%arg%", args[0]));
+				sender.sendMessage(messenger.getMessage("gamemode-not-exists").replaceAll("%arg%", args[0]));
 				return true;
 			}
 			
 			if(gameMode == null) {
-				sender.sendMessage(messanger.getMessage("gamemode-not-exists").replaceAll("%arg%", args[0]));
+				sender.sendMessage(messenger.getMessage("gamemode-not-exists").replaceAll("%arg%", args[0]));
 				return true;
 			}
 			
@@ -54,7 +54,7 @@ public class CommandGamemode implements CommandExecutor {
 		}
 		
 		if(target == null) {
-			sender.sendMessage(messanger.getMessage("gamemode-no-target").replaceAll("%target%", args.length > 1 ? args[1] : "PLAYER"));
+			sender.sendMessage(messenger.getMessage("gamemode-no-target").replaceAll("%target%", args.length > 1 ? args[1] : "PLAYER"));
 			return true;
 		}
 		
@@ -95,12 +95,12 @@ public class CommandGamemode implements CommandExecutor {
 		}
 		
 		if(gameMode == null) {
-			sender.sendMessage(messanger.getMessage("gamemode-not-exists").replaceAll("%arg%", args[0]));
+			sender.sendMessage(messenger.getMessage("gamemode-not-exists").replaceAll("%arg%", args[0]));
 			return true;
 		}
 		
 		((Player)sender).setGameMode(gameMode);
-		sender.sendMessage(messanger.getMessage("gamemode-set-" + gameMode.name().toLowerCase()));
+		sender.sendMessage(messenger.getMessage("gamemode-set-" + gameMode.name().toLowerCase()));
 		
 		return true;
 	}

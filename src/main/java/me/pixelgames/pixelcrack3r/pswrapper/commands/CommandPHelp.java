@@ -15,18 +15,18 @@ public class CommandPHelp implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		MultiLanguageMessanger messanger = new MultiLanguageMessanger("PSWrapper", "de");
+		MultiLanguageMessanger messenger = new MultiLanguageMessanger("PSWrapper", "de");
 		
 		if(sender instanceof Player) {
 			MultiLanguageManager man = new MultiLanguageManager(((Player)sender).getUniqueId(), new MySQLConfiguration(PixelGames.getDefaultMySQL(), "languages"));
-			messanger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
+			messenger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
 		}
 		
 		sender.sendMessage("§7§m-------------------------------------------------");
 		sender.sendMessage("");
 		
 		for(String commandName : PrivateServer.getInstance().getDescription().getCommands().keySet()) {
-			sender.sendMessage(" §8 - §9/" + commandName + " §7» " + messanger.getMessage("command-" + commandName));			
+			sender.sendMessage(" §8 - §9/" + commandName + " §7» " + messenger.getMessage("command-" + commandName));
 		}
 
 		sender.sendMessage("");

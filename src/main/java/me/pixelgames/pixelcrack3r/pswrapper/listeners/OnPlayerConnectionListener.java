@@ -44,26 +44,26 @@ public class OnPlayerConnectionListener implements Listener {
 			e.setJoinMessage("");
 			Bukkit.getOnlinePlayers().forEach(player -> {
 				MultiLanguageManager man = new MultiLanguageManager(player.getUniqueId(), new MySQLConfiguration(PixelGames.getDefaultMySQL(), "languages"));
-				MultiLanguageMessanger messanger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
+				MultiLanguageMessanger messenger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
 				
-				player.sendMessage(messanger.getMessage("player-join").replaceAll("%player%", e.getPlayer().getName()));
+				player.sendMessage(messenger.getMessage("player-join").replaceAll("%player%", e.getPlayer().getName()));
 			});
 		}
 
 		
 		MultiLanguageManager man = new MultiLanguageManager(e.getPlayer().getUniqueId(), new MySQLConfiguration(PixelGames.getDefaultMySQL(), "languages"));
-		MultiLanguageMessanger messanger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
+		MultiLanguageMessanger messenger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
 		
 		if(e.getPlayer().getUniqueId().toString().equalsIgnoreCase(PrivateServer.getInstance().getOwner().toString())) {
 			e.getPlayer().sendMessage("§6§m-------------------------------------------------");
-			e.getPlayer().sendMessage(messanger.getMessage("join-info-owner"));
+			e.getPlayer().sendMessage(messenger.getMessage("join-info-owner"));
 			e.getPlayer().sendMessage("§6§m-------------------------------------------------");
 		} else {
 			e.getPlayer().sendMessage("§6§m-------------------------------------------------");
-			e.getPlayer().sendMessage(messanger.getMessage("join-info-player"));
+			e.getPlayer().sendMessage(messenger.getMessage("join-info-player"));
 			e.getPlayer().sendMessage("§6§m-------------------------------------------------");
 		}
-		e.getPlayer().sendMessage(messanger.getMessage("join-command-info"));
+		e.getPlayer().sendMessage(messenger.getMessage("join-command-info"));
 	}
 	
 	@EventHandler
@@ -72,9 +72,9 @@ public class OnPlayerConnectionListener implements Listener {
 			e.setQuitMessage("");
 			Bukkit.getOnlinePlayers().forEach(player -> {
 				MultiLanguageManager man = new MultiLanguageManager(player.getUniqueId(), new MySQLConfiguration(PixelGames.getDefaultMySQL(), "languages"));
-				MultiLanguageMessanger messanger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
+				MultiLanguageMessanger messenger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
 				
-				player.sendMessage(messanger.getMessage("player-quit").replaceAll("%player%", e.getPlayer().getName()));
+				player.sendMessage(messenger.getMessage("player-quit").replaceAll("%player%", e.getPlayer().getName()));
 			});
 			
 		}

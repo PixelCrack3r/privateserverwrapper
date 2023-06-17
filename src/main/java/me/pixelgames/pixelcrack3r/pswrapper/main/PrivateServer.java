@@ -1,13 +1,34 @@
 package me.pixelgames.pixelcrack3r.pswrapper.main;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
+import dev.derklaro.aerogel.Inject;
+import dev.derklaro.aerogel.Singleton;
+
+import eu.cloudnetservice.common.document.gson.JsonDocument;
+
+import eu.cloudnetservice.driver.channel.ChannelMessage;
+import eu.cloudnetservice.driver.channel.ChannelMessageTarget;
+import eu.cloudnetservice.driver.event.EventManager;
+import eu.cloudnetservice.driver.network.buffer.DataBuf;
+
+import eu.cloudnetservice.ext.platforminject.api.PlatformEntrypoint;
+import eu.cloudnetservice.ext.platforminject.api.stereotype.Command;
+import eu.cloudnetservice.ext.platforminject.api.stereotype.Dependency;
+import eu.cloudnetservice.ext.platforminject.api.stereotype.PlatformPlugin;
+
+import eu.cloudnetservice.modules.bridge.BridgeServiceHelper;
+import eu.cloudnetservice.wrapper.holder.ServiceInfoHolder;
+
+import gq.pixelgames.pixelcrack3r.utils.MultiLanguageMessanger;
 import me.pixelgames.pixelcrack3r.pswrapper.cloudlistener.ChannelMessageReceiveListener;
 import me.pixelgames.pixelcrack3r.pswrapper.listeners.OnPlayerConnectionListener;
+
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.gson.JsonElement;
@@ -15,11 +36,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
-import de.dytanic.cloudnet.common.document.gson.JsonDocument;
-import de.dytanic.cloudnet.driver.CloudNetDriver;
-import de.dytanic.cloudnet.driver.channel.ChannelMessage;
-import de.dytanic.cloudnet.driver.channel.ChannelMessageTarget.Type;
-import de.dytanic.cloudnet.ext.bridge.server.BridgeServerHelper;
 import me.pixelgames.pixelcrack3r.pswrapper.commands.CommandBan;
 import me.pixelgames.pixelcrack3r.pswrapper.commands.CommandGamemode;
 import me.pixelgames.pixelcrack3r.pswrapper.commands.CommandKick;
@@ -32,21 +48,111 @@ import me.pixelgames.pixelcrack3r.pswrapper.commands.CommandTime;
 import me.pixelgames.pixelcrack3r.pswrapper.commands.CommandUnban;
 import me.pixelgames.pixelcrack3r.pswrapper.commands.CommandWeather;
 import me.pixelgames.pixelcrack3r.pswrapper.commands.CommandWhitelist;
-import gq.pixelgames.pixelcrack3r.utils.MultiLanguageMessanger;
 
-public class PrivateServer extends JavaPlugin {
+@Singleton
+@PlatformPlugin(
+		api = "1.13",
+		pluginFileNames = "plugin.yml",
+		platform = "bukkit",
+		authors = "PixelCrack3r",
+		version = "2.0",
+		name = "PrivateServerWrapper",
+		description = "Connects the private server to the lobby.",
+		dependencies = {
+				@Dependency(
+						name = "CloudNet-Bridge"
+				)
+		},
+		commands = {
+				@Command(
+						name = "phelp",
+						description = "A pixelgames provided command.",
+						usage = "/<command>"
+				),
+				@Command(
+						name = "public",
+						description = "A pixelgames provided command.",
+						usage = "/<command>"
+				),
+				@Command(
+						name = "private",
+						description = "A pixelgames provided command.",
+						usage = "/<command>"
+				),
+				@Command(
+						name = "pwhitelist",
+						description = "A pixelgames provided command.",
+						usage = "/<command>"
+				),
+				@Command(
+						name = "ppl",
+						description = "A pixelgames provided command.",
+						usage = "/<command>"
+				),
+				@Command(
+						name = "pmod",
+						description = "A pixelgames provided command.",
+						usage = "/<command>"
+				),
+				@Command(
+						name = "pgamemode",
+						description = "A pixelgames provided command.",
+						usage = "/<command>"
+				),
+				@Command(
+						name = "pkick",
+						description = "A pixelgames provided command.",
+						usage = "/<command>"
+				),
+				@Command(
+						name = "pban",
+						description = "A pixelgames provided command.",
+						usage = "/<command>"
+				),
+				@Command(
+						name = "punban",
+						description = "A pixelgames provided command.",
+						usage = "/<command>"
+				),
+				@Command(
+						name = "ptime",
+						description = "A pixelgames provided command.",
+						usage = "/<command>"
+				),
+				@Command(
+						name = "pweather",
+						description = "A pixelgames provided command.",
+						usage = "/<command>"
+				)
+		}
+
+)
+public class PrivateServer implements PlatformEntrypoint {
 
 	private final static String PREFIX = "[PrivateServer]";
 
 	private static PrivateServer instance;
+
+	private final JavaPlugin plugin;
+	private final EventManager eventManager;
+	private final ServiceInfoHolder serviceInfoHolder;
+	private final BridgeServiceHelper bridgeServiceHelper;
 	
 	private JsonObject properties;
-	
+
+	@Inject
+	public PrivateServer(JavaPlugin javaPlugin, EventManager eventManager, ServiceInfoHolder serviceInfoHolder, BridgeServiceHelper bridgeServiceHelper) {
+		this.plugin = javaPlugin;
+		this.eventManager = eventManager;
+		this.serviceInfoHolder = serviceInfoHolder;
+		this.bridgeServiceHelper = bridgeServiceHelper;
+	}
+
 	@Override
-	public void onEnable() {
+	public void onLoad() {
 		instance = this;
 		
-		CloudNetDriver.getInstance().getEventManager().registerListener(new ChannelMessageReceiveListener());
+		this.eventManager.registerListener(new ChannelMessageReceiveListener());
 		
 		JsonObject properties = this.requestProperties();
 		
@@ -66,35 +172,33 @@ public class PrivateServer extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		CloudNetDriver.getInstance().getEventManager().unregisterListener(this.getClassLoader());
+		this.eventManager.unregisterListener(this.getClass().getClassLoader());
 	}
 	
 	public JsonObject requestProperties() {
-		List<ChannelMessage> msgs = this.sendQuery(JsonDocument.newDocument().append("request", "startup_properties")).stream()
-				.filter(msg -> msg.getJson().contains("properties"))
-				.collect(Collectors.toList());
+		List<ChannelMessage> msgs = new ArrayList<>(this.sendQuery(JsonDocument.newDocument().append("request", "startup_properties")));
 		
-		if(msgs.size() > 0) return JsonParser.parseString(msgs.get(0).getJson().getString("properties")).getAsJsonObject();
+		if(msgs.size() > 0) return new JsonParser().parse(JsonDocument.fromJsonString(msgs.get(0).content().readString()).getString("properties")).getAsJsonObject();
 		return null;
 	}
 	
 	private void loadListeners() {
-		Bukkit.getPluginManager().registerEvents(new OnPlayerConnectionListener(), this);
+		Bukkit.getPluginManager().registerEvents(new OnPlayerConnectionListener(), this.plugin);
 	}
 	
 	private void loadCommands() {
-		this.getCommand("phelp").setExecutor(new CommandPHelp());
-		this.getCommand("private").setExecutor(new CommandPrivate());
-		this.getCommand("pmod").setExecutor(new CommandMod());
-		this.getCommand("pkick").setExecutor(new CommandKick());
-		this.getCommand("pban").setExecutor(new CommandBan());
-		this.getCommand("punban").setExecutor(new CommandUnban());
-		this.getCommand("pweather").setExecutor(new CommandWeather());
-		this.getCommand("ptime").setExecutor(new CommandTime());
-		this.getCommand("pgamemode").setExecutor(new CommandGamemode());
-		this.getCommand("ppl").setExecutor(new CommandPL());
-		this.getCommand("public").setExecutor(new CommandPublic());
-		this.getCommand("pwhitelist").setExecutor(new CommandWhitelist());
+		this.plugin.getCommand("phelp").setExecutor(new CommandPHelp());
+		this.plugin.getCommand("private").setExecutor(new CommandPrivate());
+		this.plugin.getCommand("pmod").setExecutor(new CommandMod());
+		this.plugin.getCommand("pkick").setExecutor(new CommandKick());
+		this.plugin.getCommand("pban").setExecutor(new CommandBan());
+		this.plugin.getCommand("punban").setExecutor(new CommandUnban());
+		this.plugin.getCommand("pweather").setExecutor(new CommandWeather());
+		this.plugin.getCommand("ptime").setExecutor(new CommandTime());
+		this.plugin.getCommand("pgamemode").setExecutor(new CommandGamemode());
+		this.plugin.getCommand("ppl").setExecutor(new CommandPL());
+		this.plugin.getCommand("public").setExecutor(new CommandPublic());
+		this.plugin.getCommand("pwhitelist").setExecutor(new CommandWhitelist());
 	}
 	
 	private void loadLanguage() {
@@ -156,13 +260,13 @@ public class PrivateServer extends JavaPlugin {
 	public void setProperties(String properties) {
 		JsonObject obj = JsonParser.parseString(properties).getAsJsonObject();
 		this.properties = obj;
-		BridgeServerHelper.setExtra(obj.toString());
-		BridgeServerHelper.updateServiceInfo();
+		this.bridgeServiceHelper.extra().set(obj.toString());
+		this.serviceInfoHolder.publishServiceInfoUpdate();
 	}
 	
 	public void updateProperties() {
-		BridgeServerHelper.setExtra(this.properties.toString());
-		BridgeServerHelper.updateServiceInfo();
+		this.bridgeServiceHelper.extra().set(this.properties.toString());
+		this.serviceInfoHolder.publishServiceInfoUpdate();
 	}
 	
 	public void setProperty(String key, String value) {
@@ -233,9 +337,13 @@ public class PrivateServer extends JavaPlugin {
 	}
 	
 	private Collection<ChannelMessage> sendQuery(JsonDocument data) {
-		return ChannelMessage.builder().targetAll(Type.SERVICE).channel("private_server").message("send_query").json(data).build().sendQuery();
+		return ChannelMessage.builder().targetAll(ChannelMessageTarget.Type.SERVICE).channel("private_server").message("send_query").buffer(DataBuf.empty().writeString(data.toString())).build().sendQuery();
 	}
-	
+
+	public PluginDescriptionFile getDescription() {
+		return this.plugin.getDescription();
+	}
+
 	public static PrivateServer getInstance() {
 		return instance;
 	}

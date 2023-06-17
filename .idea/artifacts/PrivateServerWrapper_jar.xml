@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PrivateServerWrapper:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PrivateServerWrapper_jar</output-path>
+    <root id="archive" name="PrivateServerWrapper.jar">
+      <element id="module-output" name="PrivateServerWrapper" />
+    </root>
+  </artifact>
+</component>
