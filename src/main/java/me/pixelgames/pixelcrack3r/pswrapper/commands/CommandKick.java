@@ -24,7 +24,7 @@ public class CommandKick implements CommandExecutor {
 			messenger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
 		}
 		
-		if(args.length <= 0) {
+		if(args.length == 0) {
 			sender.sendMessage(messenger.getMessage("kick-usage"));
 			return true;
 		}

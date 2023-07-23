@@ -57,8 +57,9 @@ public class CommandGamemode implements CommandExecutor {
 			sender.sendMessage(messenger.getMessage("gamemode-no-target").replaceAll("%target%", args.length > 1 ? args[1] : "PLAYER"));
 			return true;
 		}
-		
-		if(args.length <= 0) {
+
+		// change game mode to next id
+		if(args.length == 0) {
 			switch(target.getGameMode()) {
 				case SURVIVAL:
 					gmId = 1;
@@ -68,9 +69,6 @@ public class CommandGamemode implements CommandExecutor {
 					break;
 				case ADVENTURE:
 					gmId = 3;
-					break;
-				case SPECTATOR:
-					gmId = 0;
 					break;
 			}	
 		}
@@ -90,16 +88,10 @@ public class CommandGamemode implements CommandExecutor {
 				case 3:
 					gameMode = GameMode.SPECTATOR;
 					break;
-				default: break;
 			}
 		}
-		
-		if(gameMode == null) {
-			sender.sendMessage(messenger.getMessage("gamemode-not-exists").replaceAll("%arg%", args[0]));
-			return true;
-		}
-		
-		((Player)sender).setGameMode(gameMode);
+
+		if(sender instanceof Player) ((Player)sender).setGameMode(gameMode);
 		sender.sendMessage(messenger.getMessage("gamemode-set-" + gameMode.name().toLowerCase()));
 		
 		return true;

@@ -1,6 +1,7 @@
 package me.pixelgames.pixelcrack3r.pswrapper.commands;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -54,7 +55,7 @@ public class CommandTime implements CommandExecutor {
 	}
 	
 	private boolean isParsable(String s) {
-		for(char c : s.toCharArray()) if(!Arrays.asList("0123456789".toCharArray()).contains(c)) return false;
+		for(char c : s.toCharArray()) if(!Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9').contains(c)) return false;
 		return true;
 	}
 	

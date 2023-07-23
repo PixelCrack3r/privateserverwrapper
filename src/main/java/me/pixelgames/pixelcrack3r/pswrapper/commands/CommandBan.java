@@ -14,11 +14,12 @@ import gq.pixelgames.pixelcrack3r.main.PixelGames;
 import me.pixelgames.pixelcrack3r.pswrapper.main.PrivateServer;
 import gq.pixelgames.pixelcrack3r.utils.MultiLanguageManager;
 import gq.pixelgames.pixelcrack3r.utils.MultiLanguageMessanger;
+import org.jetbrains.annotations.NotNull;
 
 public class CommandBan implements CommandExecutor {
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public boolean onCommand(@NotNull CommandSender sender, Command command, String label, String[] args) {
 		MultiLanguageMessanger messenger = new MultiLanguageMessanger("PSWrapper", "de");
 		
 		if(sender instanceof Player) {
@@ -26,7 +27,7 @@ public class CommandBan implements CommandExecutor {
 			messenger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
 		}
 		
-		if(args.length <= 0) {
+		if(args.length == 0) {
 			sender.sendMessage(messenger.getMessage("ban-usage"));
 			return true;
 		}
@@ -34,7 +35,7 @@ public class CommandBan implements CommandExecutor {
 		String target = args[0];
 		Player targetPlayer = Bukkit.getPlayer(target);
 		
-		if(targetPlayer == (Player) sender) {
+		if(targetPlayer == sender) {
 			sender.sendMessage(messenger.getMessage("ban-no-target").replaceAll("%target%", args[0]));
 			return true;
 		}

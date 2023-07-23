@@ -8,10 +8,10 @@ import java.util.UUID;
 import dev.derklaro.aerogel.Inject;
 import dev.derklaro.aerogel.Singleton;
 
-import eu.cloudnetservice.common.document.gson.JsonDocument;
-
 import eu.cloudnetservice.driver.channel.ChannelMessage;
 import eu.cloudnetservice.driver.channel.ChannelMessageTarget;
+import eu.cloudnetservice.driver.document.Document;
+import eu.cloudnetservice.driver.document.DocumentFactory;
 import eu.cloudnetservice.driver.event.EventManager;
 import eu.cloudnetservice.driver.network.buffer.DataBuf;
 
@@ -176,9 +176,9 @@ public class PrivateServer implements PlatformEntrypoint {
 	}
 	
 	public JsonObject requestProperties() {
-		List<ChannelMessage> msgs = new ArrayList<>(this.sendQuery(JsonDocument.newDocument().append("request", "startup_properties")));
+		List<ChannelMessage> msgs = new ArrayList<>(this.sendQuery(Document.newJsonDocument().append("request", "startup_properties")));
 		
-		if(msgs.size() > 0) return new JsonParser().parse(JsonDocument.fromJsonString(msgs.get(0).content().readString()).getString("properties")).getAsJsonObject();
+		if(msgs.size() > 0) return new JsonParser().parse(DocumentFactory.json().parse(msgs.get(0).content().readString()).getString("properties")).getAsJsonObject();
 		return null;
 	}
 	
@@ -336,7 +336,7 @@ public class PrivateServer implements PlatformEntrypoint {
 		return this.getProperty("privateserver.isTemplate", new JsonPrimitive("false")).getAsString().equalsIgnoreCase("true");
 	}
 	
-	private Collection<ChannelMessage> sendQuery(JsonDocument data) {
+	private Collection<ChannelMessage> sendQuery(Document data) {
 		return ChannelMessage.builder().targetAll(ChannelMessageTarget.Type.SERVICE).channel("private_server").message("send_query").buffer(DataBuf.empty().writeString(data.toString())).build().sendQuery();
 	}
 

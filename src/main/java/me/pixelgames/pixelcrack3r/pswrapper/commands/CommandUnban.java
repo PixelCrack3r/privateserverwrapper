@@ -25,7 +25,7 @@ public class CommandUnban implements CommandExecutor {
 			messenger = new MultiLanguageMessanger("PSWrapper", man.getLanguage());
 		}
 		
-		if(args.length <= 0) {
+		if(args.length == 0) {
 			sender.sendMessage(messenger.getMessage("unban-usage"));
 			return true;
 		}
